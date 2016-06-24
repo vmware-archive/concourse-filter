@@ -1,5 +1,8 @@
-ls therealpassword 
-echo "dsdf go1.6.2 sdfads"
-echo "start NOW therealpassword"
+set +ex
+echo "start test"
+echo "password"
+echo "dpasswordd"
 sleep 3
-echo "start NOW therealpassword"
+ls password
+ech "dpasswordd"
+echo "stop test password"
