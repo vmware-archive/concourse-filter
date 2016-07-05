@@ -35,7 +35,8 @@ func newEnvStringReplacer() *strings.Replacer {
 		envVarValue := pair[1]
 		if !whiteList[envVarName] && envVarValue != "" {
 			envVars = append(envVars, envVarValue)
-			envVars = append(envVars, "[redacted]")
+			redactedOutput := "[redacted " + envVarName + "]"
+			envVars = append(envVars, redactedOutput)
 		}
 	}
 
