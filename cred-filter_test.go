@@ -32,10 +32,18 @@ var _ = Describe("CredFilter", func() {
 	})
 	Context("Sensitive credentials available", func() {
 		It("filters out those credentials", func() {
-			env := []string{"SECRET=secret"}
+			env := []string{"SECRET=secret", "INFO=info"}
 			output, err := runBinary("super secret info", env)
 			Expect(err).To(BeNil())
-			Expect(output).To(Equal("super [redacted] info\n"))
+			Expect(output).To(Equal("super [redacted] [redacted]\n"))
+		})
+		Context("sensitive credential env var is whitelisted", func() {
+			It("filters out non-white-listed credentials", func() {
+				env := []string{"SECRET=secret", "INFO=info", "CREDENTIAL_FILTER_WHITELIST=OTHER1,INFO,OTHER2"}
+				output, err := runBinary("super secret info", env)
+				Expect(err).To(BeNil())
+				Expect(output).To(Equal("super [redacted] info\n"))
+			})
 		})
 	})
 })
