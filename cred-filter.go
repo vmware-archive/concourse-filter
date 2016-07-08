@@ -47,8 +47,9 @@ func main() {
 	envStringReplacer := newEnvStringReplacer()
 
 	scanner := bufio.NewScanner(os.Stdin)
+
 	for scanner.Scan() {
-		os.Stdout.WriteString(envStringReplacer.Replace(scanner.Text()))
+		fmt.Fprintln(os.Stdout, envStringReplacer.Replace(scanner.Text()))
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
