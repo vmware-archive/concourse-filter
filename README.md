@@ -41,3 +41,7 @@ stop test [redacted]
 go get ./...
 ginkgo
 ```
+
+## Limitations
+
+- Cannot handle filtering of multi-token environment variable values (ex. `SECRET='MULTI WORD SECRET'`
