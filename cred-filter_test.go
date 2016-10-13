@@ -1,8 +1,6 @@
 package main_test
 
 import (
-	// . "github.com/geramirez/concourse-filter"
-
 	"os/exec"
 	"strings"
 
@@ -43,6 +41,15 @@ var _ = Describe("CredFilter", func() {
 				output, err := runBinary("super secret info", env)
 				Expect(err).To(BeNil())
 				Expect(output).To(Equal("super [redacted SECRET] info\n"))
+			})
+		})
+		Context("the buffer can handle a 128k string", func() {
+			It("doesn't crash", func() {
+				env := []string{"SECRET=secret", "INFO=info", "CREDENTIAL_FILTER_WHITELIST=OTHER1,INFO,OTHER2"}
+				input := make([]byte, 128*1024)
+
+				_, err := runBinary(string(input[:]), env)
+				Expect(err).To(BeNil())
 			})
 		})
 	})
