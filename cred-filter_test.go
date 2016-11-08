@@ -43,10 +43,10 @@ var _ = Describe("CredFilter", func() {
 				Expect(output).To(Equal("super [redacted SECRET] info\n"))
 			})
 		})
-		Context("the buffer can handle a 128k string", func() {
+		Context("the buffer can handle a 256k string", func() {
 			It("doesn't crash", func() {
 				env := []string{"SECRET=secret", "INFO=info", "CREDENTIAL_FILTER_WHITELIST=OTHER1,INFO,OTHER2"}
-				input := make([]byte, 128*1024)
+				input := make([]byte, 256*1024)
 
 				_, err := runBinary(string(input[:]), env)
 				Expect(err).To(BeNil())
