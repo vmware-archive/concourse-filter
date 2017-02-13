@@ -45,3 +45,4 @@ ginkgo
 ## Limitations
 
 - Cannot handle filtering of multi-token environment variable values (ex. `SECRET='MULTI WORD SECRET'`
+- The `stderr` based filtering only works on bash 4.x
