@@ -45,13 +45,17 @@ func newEnvStringReplacer() *strings.Replacer {
 
 func main() {
 	envStringReplacer := newEnvStringReplacer()
-	buffer := make([]byte, 257 * 1024)
+	buffer := make([]byte, 257*1024)
 
 	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Buffer(buffer, 257 * 1024)
+	scanner.Buffer(buffer, 257*1024)
 
 	for scanner.Scan() {
-		fmt.Fprintln(os.Stdout, envStringReplacer.Replace(scanner.Text()))
+		output := os.Stdout
+		if len(os.Args) > 1 && os.Args[1] == "-stderr" {
+			output = os.Stderr
+		}
+		fmt.Fprintln(output, envStringReplacer.Replace(scanner.Text()))
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
