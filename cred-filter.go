@@ -13,10 +13,14 @@ import (
 
 func main() {
 	source := os.Stdin
-	destination := os.Stdout
+
+	destination := NewLineWriter(os.Stdout)
+
 	if len(os.Args) > 1 && os.Args[1] == "-stderr" {
-		destination = os.Stderr
+		destination = NewLineWriter(os.Stderr)
 	}
+
+	defer destination.Close()
 
 	redacted, maxSize := RedactedList()
 
@@ -24,6 +28,43 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+type LineWriter struct {
+	buffer []byte
+	writer io.Writer
+}
+
+func NewLineWriter(writer io.Writer) *LineWriter {
+	return &LineWriter{
+		buffer: []byte{},
+		writer: writer,
+	}
+}
+
+func (lw *LineWriter) Write(p []byte) (int, error) {
+	lw.buffer = append(lw.buffer, p...)
+
+	index := bytes.IndexRune(lw.buffer, '\n')
+	if index != -1 {
+		_, err := lw.writer.Write(lw.buffer[:index])
+		if err != nil {
+			return 0, err
+		}
+
+		lw.buffer = lw.buffer[index:]
+	}
+
+	return len(p), nil
+}
+
+func (lw *LineWriter) Close() error {
+	_, err := lw.writer.Write(lw.buffer)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type RedactedVariable struct {
@@ -68,7 +109,7 @@ func RedactedList() ([]RedactedVariable, int) {
 	return redacted, maxSize
 }
 
-func Stream(source io.Reader, destination io.Writer, redacted []RedactedVariable, maxSize int) error {
+func Stream(source io.Reader, destination io.WriteCloser, redacted []RedactedVariable, maxSize int) error {
 	if maxSize == 0 {
 		_, err := io.Copy(destination, source)
 		if err != nil {
