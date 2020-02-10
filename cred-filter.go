@@ -46,13 +46,14 @@ func (lw *LineWriter) Write(p []byte) (int, error) {
 	lw.buffer = append(lw.buffer, p...)
 
 	index := bytes.IndexRune(lw.buffer, '\n')
+
 	if index != -1 {
-		_, err := lw.writer.Write(lw.buffer[:index])
+		_, err := lw.writer.Write(lw.buffer[:index+1])
 		if err != nil {
 			return 0, err
 		}
 
-		lw.buffer = lw.buffer[index:]
+		lw.buffer = lw.buffer[index+1:]
 	}
 
 	return len(p), nil
